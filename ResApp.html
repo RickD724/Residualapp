@@ -271,10 +271,10 @@
     min-width: 200px;
     transition: var(--transition);
   }
-  .select:hover { transform: scale(1.02); }
-
-  /* Prevent grid children from forcing overflow on iOS (fixes overlap) */
-  .grid > div { min-width: 0; }
+  
+  .select:hover {
+    transform: scale(1.02);
+  }
   
   .card {
     background: var(--card);
@@ -308,7 +308,9 @@
     transform: translateY(-5px);
   }
   
-  .card:hover::before { opacity: 1; }
+  .card:hover::before {
+    opacity: 1;
+  }
   
   .controls {
     position: sticky;
@@ -345,7 +347,9 @@
     transition: var(--transition);
   }
   
-  .form-group:hover label { color: var(--accent); }
+  .form-group:hover label {
+    color: var(--accent);
+  }
   
   select, input[type="number"], input[type="text"] {
     width: 100%;
@@ -370,7 +374,9 @@
     transform: translateY(-2px);
   }
   
-  select:hover, input:hover { border-color: var(--border-hover); }
+  select:hover, input:hover {
+    border-color: var(--border-hover);
+  }
   
   select {
     cursor: pointer;
@@ -388,7 +394,9 @@
     transition: var(--transition);
   }
   
-  input[type="checkbox"]:hover { transform: scale(1.1); }
+  input[type="checkbox"]:hover {
+    transform: scale(1.1);
+  }
   
   .muted { color: var(--muted); }
   
@@ -400,7 +408,10 @@
     font-style: italic;
   }
   
-  .searchWrap { max-width: 280px; min-width: 220px; }
+  .searchWrap {
+    max-width: 280px;
+    min-width: 220px;
+  }
   
   .rowline {
     display: flex;
@@ -454,9 +465,6 @@
     position: relative;
     z-index: 1;
   }
-
-  /* Make MSRP × RV% detail use a light purple and consistent weight */
-  #trueOut { color: var(--purple); opacity: 0.95; font-weight: 700; }
   
   .tableWrap {
     margin-top: 20px;
@@ -498,8 +506,14 @@
     border-bottom: 2px solid var(--border-hover);
   }
   
-  tbody tr { transition: var(--transition); }
-  tbody tr:hover { background: var(--card-hover); transform: scale(1.01); }
+  tbody tr {
+    transition: var(--transition);
+  }
+  
+  tbody tr:hover {
+    background: var(--card-hover);
+    transform: scale(1.01);
+  }
   
   td.ok {
     color: var(--success);
@@ -508,7 +522,10 @@
     text-shadow: 0 0 10px var(--success-glow);
   }
   
-  td.err { color: var(--danger); opacity: 0.5; }
+  td.err {
+    color: var(--danger);
+    opacity: 0.5;
+  }
   
   td:first-child, th:first-child {
     position: sticky;
@@ -531,8 +548,6 @@
     animation: scaleIn 0.8s ease;
     animation-delay: 0.3s;
     animation-fill-mode: both;
-    /* Ensure scrolling to Summary doesn't tuck under sticky header on iOS */
-    scroll-margin-top: 120px;
   }
   
   .sum-grid {
@@ -572,7 +587,9 @@
     transition: transform 0.4s;
   }
   
-  .srow:hover::before { transform: scaleY(1); }
+  .srow:hover::before {
+    transform: scaleY(1);
+  }
   
   .srow:hover {
     transform: translateX(8px);
@@ -620,7 +637,10 @@
     background: linear-gradient(135deg, rgba(59, 130, 246, 0.3), rgba(139, 92, 246, 0.2));
   }
   
-  .footer { margin: 40px 0 20px; animation: fadeInUp 1s ease; }
+  .footer {
+    margin: 40px 0 20px;
+    animation: fadeInUp 1s ease;
+  }
   
   .foot-card {
     background: var(--card);
@@ -642,7 +662,11 @@
     background-clip: text;
   }
   
-  .foot-text { color: var(--muted); font-size: 0.95rem; line-height: 1.8; }
+  .foot-text {
+    color: var(--muted);
+    font-size: 0.95rem;
+    line-height: 1.8;
+  }
   
   @media (max-width: 768px) {
     .result .big { font-size: 2.5rem; }
@@ -667,7 +691,10 @@
     animation: pulse 1.5s infinite;
   }
   
-  .success-flash { animation: successPulse 0.6s ease; }
+  .success-flash {
+    animation: successPulse 0.6s ease;
+  }
+  
   @keyframes successPulse {
     0%, 100% { transform: scale(1); }
     50% { transform: scale(1.05); box-shadow: 0 0 30px var(--success-glow); }
@@ -798,15 +825,13 @@
           <div class="srow" style="display:none;">
             <span class="slabel">MSRP</span><span class="sval" id="sumMsrp">—</span>
           </div>
-          <div class="srow">
-            <span class="slabel">MSRP × RV%</span><span class="sval" id="sumTrue">—</span>
-          </div>
+          <div class="srow"><span class="slabel">MSRP × RV%</span><span class="sval" id="sumTrue">—</span></div>
           <div class="srow">
             <span class="slabel">Value Index</span>
             <span class="sval" id="sumLvi" title="Higher is better">—</span>
           </div>
         </div>
-        <div class="hint" id="lviHelp" style="margin-top:12px;text-align:center;">💡 The higher the Lease Value Index, the better.</div>
+        <div class="hint" id="lviHelp" style="margin-top:12px;text-align:center;">💡 Higher Value Index = Better Deal</div>
 
         <div class="badges" id="badgeRow" aria-label="Adjustments"></div>
       </div>
@@ -888,7 +913,6 @@
 
 <script>
 (function(){
-  // ---- PWA icons & manifest (generated at runtime) ----
   (function generateIconsAndManifest(){
     try{
       var canvas = document.createElement('canvas');
@@ -923,7 +947,6 @@
     }catch(e){}
   })();
 
-  // ---- Theme handling ----
   var themeBtn = document.getElementById('themeBtn');
   var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
   document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
@@ -937,7 +960,6 @@
     setTimeout(function(){ themeBtn.classList.remove('success-flash'); }, 600);
   });
 
-  // ---- Element refs ----
   var programSel = document.getElementById('programSel');
   var validateBtn = document.getElementById('validateBtn');
   var exportCsvBtn = document.getElementById('exportCsvBtn');
@@ -992,7 +1014,6 @@
   var closeValBtn = document.getElementById('closeValBtn');
   var validatorOutput = document.getElementById('validatorOutput');
 
-  // ---- Data state ----
   var data, MONTHS = [], PACPO = 2;
   var fullTrimList = [];
   var currentProgramLabel = 'Current';
@@ -1021,7 +1042,7 @@
     if(hideNA.checked) p.set('hidena', '1');
     if(msrpInput.value) p.set('msrp', msrpInput.value);
     var url = location.pathname + '?' + p.toString();
-    shareLink.value = (location.origin || '') + url;
+    shareLink.value = location.origin + url;
     history.replaceState(null, '', url);
   }
 
@@ -1198,8 +1219,8 @@
 
     var entry = branch[yrKey][code];
     var base = term ? ((entry && entry.residuals && entry.residuals[term]) || null) : null;
-    var PACPOv = data.pacpo_bonus_percent || 2;
-    var pacpoAdj = pacpoToggle.checked ? PACPOv : 0;
+    var PACPO = data.pacpo_bonus_percent || 2;
+    var pacpoAdj = pacpoToggle.checked ? PACPO : 0;
     var milesMap = (data && data.annual_mileage_adjustments_percent && data.annual_mileage_adjustments_percent.miles_per_year) || {};
     var annualAdj = 0;
     if(base !== null && parseInt(term || "0", 10) >= 24){ annualAdj = milesMap[String(milesPerYear)] || 0; }
@@ -1252,7 +1273,7 @@
 
     badgeRow.innerHTML = '';
     if(base !== null && term){ addBadge('Base ' + base + '%'); }
-    if(pacpoToggle.checked){ addBadge('+' + PACPOv + '% PACPO'); }
+    if(pacpoToggle.checked){ addBadge('+' + PACPO + '% PACPO'); }
     if(term && parseInt(term, 10) >= 24){ addBadge(((annualAdj>=0?'+':'') + annualAdj + '%') + ' Annual'); }
     if(odo != null && !isNaN(odo)){ addBadge(((inceptionAdj>=0?'+':'') + inceptionAdj + '%') + ' Inception'); }
 
@@ -1460,7 +1481,6 @@
     if(p.msrp){ msrpInput.value = p.msrp; }
   }
 
-  // ---- Events ----
   programSel.addEventListener('change', function(){
     var val = programSel.value;
     var label = programSel.options[programSel.selectedIndex].textContent.replace(/^Program:\s*/,'');
@@ -1520,7 +1540,6 @@
   leaseTerm.addEventListener('input', leaseCompute);
   leaseMF.addEventListener('input', compute);
 
-  // ---- Boot ----
   var initialParams = readParams();
   if(initialParams.program){
     var opt = Array.from(programSel.options).find(function(o){return o.value===initialParams.program;});
