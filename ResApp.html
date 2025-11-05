@@ -1,758 +1,667 @@
-<!DOCTYPE html>
-
-<html lang="en">
+<!doctype html>
+<html lang="en" data-theme="light">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Residual Calculator - By Ricardo</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Residual App - By Ricardo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+  :root{
+    --bg: #0a0e1a;
+    --bg-gradient: linear-gradient(135deg, #0a0e1a 0%, #1a1f35 100%);
+    --card: rgba(255, 255, 255, 0.03);
+    --card-hover: rgba(255, 255, 255, 0.07);
+    --text: #e6ebff;
+    --muted: #8b92b0;
+    --border: rgba(255, 255, 255, 0.08);
+    --accent: #3b82f6;
+    --accent-hover: #2563eb;
+    --accent-glow: rgba(59, 130, 246, 0.3);
+    --chip: #1e293b;
+    --chip-text: #cbd5e1;
+    --danger: #ef4444;
+    --success: #10b981;
+    --radius: 16px;
+    --shadow: 0 20px 50px rgba(0,0,0,0.4);
+    --glow: 0 0 20px var(--accent-glow);
+    --badge: #1e293b;
+    --badge-border: #334155;
+  }
 
-:root {
-–bg: #0a0e1a;
-–card: rgba(255, 255, 255, 0.05);
-–text: #e6ebff;
-–muted: #8b92b0;
-–border: rgba(255, 255, 255, 0.1);
-–accent: #3b82f6;
-–accent-dark: #2563eb;
-–success: #10b981;
-–danger: #ef4444;
-–shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
-}
+  [data-theme="light"]{
+    --bg: #f8fafc;
+    --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    --card: #ffffff;
+    --card-hover: #f8fafc;
+    --text: #0f172a;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --accent: #3b82f6;
+    --accent-hover: #2563eb;
+    --accent-glow: rgba(59, 130, 246, 0.15);
+    --chip: #f1f5f9;
+    --chip-text: #475569;
+    --shadow: 0 20px 50px rgba(15,23,42,0.08);
+    --glow: 0 0 30px rgba(59, 130, 246, 0.1);
+    --badge: #f1f5f9;
+    --badge-border: #cbd5e1;
+  }
 
-[data-theme=“light”] {
-–bg: #f8fafc;
-–card: #ffffff;
-–text: #0f172a;
-–muted: #64748b;
-–border: #e2e8f0;
-–shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-}
+  *{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
-body {
-font-family: ‘Inter’, sans-serif;
-background: var(–bg);
-color: var(–text);
-line-height: 1.6;
-min-height: 100vh;
-background-image: linear-gradient(135deg, var(–bg) 0%, #1a1f35 100%);
-}
+  html, body{
+    background: var(--bg);
+    background-image: var(--bg-gradient);
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-.container {
-max-width: 1200px;
-margin: 0 auto;
-padding: 20px;
-}
+  .wrap{
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px 16px 40px;
+  }
 
-.header {
-background: var(–card);
-border: 1px solid var(–border);
-border-radius: 16px;
-padding: 20px;
-margin-bottom: 24px;
-display: flex;
-justify-content: space-between;
-align-items: center;
-flex-wrap: wrap;
-gap: 16px;
-box-shadow: var(–shadow);
-backdrop-filter: blur(10px);
-}
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 400px;
+    background: radial-gradient(circle at 50% 0%, var(--accent-glow), transparent 60%);
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 0;
+  }
 
-.logo {
-background: linear-gradient(135deg, var(–accent), var(–accent-dark));
-color: white;
-padding: 12px 24px;
-border-radius: 50px;
-font-weight: 700;
-font-size: 0.95rem;
-box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
-}
+  .top{
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow);
+    animation: slideDown 0.5s ease;
+  }
 
-.theme-toggle {
-background: var(–card);
-border: 1px solid var(–border);
-color: var(–text);
-padding: 10px 20px;
-border-radius: 50px;
-cursor: pointer;
-font-weight: 600;
-font-family: ‘Inter’, sans-serif;
-transition: all 0.3s;
-}
+  @keyframes slideDown {
+    from { transform: translateY(-20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
 
-.theme-toggle:hover {
-border-color: var(–accent);
-transform: translateY(-2px);
-}
+  .brand{
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
 
-.card {
-background: var(–card);
-border: 1px solid var(–border);
-border-radius: 16px;
-padding: 24px;
-margin-bottom: 20px;
-box-shadow: var(–shadow);
-backdrop-filter: blur(10px);
-}
+  .pill{
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+    color: #fff;
+    padding: 10px 14px; /* compact */
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.3px;
+    box-shadow: 0 4px 20px var(--accent-glow);
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+  .pill:hover { transform: translateY(-2px); box-shadow: 0 8px 30px var(--accent-glow); }
 
-.grid {
-display: grid;
-gap: 16px;
-margin-bottom: 16px;
-}
+  .theme{
+    border: 1px solid var(--border);
+    background: var(--card);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: var(--text);
+    padding: 8px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
+    white-space: nowrap;
+  }
+  .theme:hover{ background: var(--card-hover); border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 4px 20px var(--accent-glow); }
 
-.grid-3 {
-grid-template-columns: repeat(3, 1fr);
-}
+  .card{
+    background: var(--card);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+    transition: all 0.3s ease;
+    animation: fadeIn 0.5s ease;
+  }
+  .card:hover { border-color: var(--accent-glow); box-shadow: var(--shadow), var(--glow); }
 
-.grid-2 {
-grid-template-columns: repeat(2, 1fr);
-}
+  .controls{ position: sticky; top: 90px; z-index: 20; }
 
-@media (max-width: 768px) {
-.grid-3, .grid-2 {
-grid-template-columns: 1fr;
-}
-}
+  .grid{ display: grid; gap: 16px; }
+  .g3{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .g2{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
-.form-group {
-display: flex;
-flex-direction: column;
-}
+  @media (max-width: 900px){ .g3, .g2{ grid-template-columns: 1fr; } }
 
-label {
-font-size: 0.875rem;
-font-weight: 600;
-color: var(–muted);
-margin-bottom: 8px;
-text-transform: uppercase;
-letter-spacing: 0.5px;
-}
+  label{
+    font-size: 0.8rem;
+    color: var(--muted);
+    display: block;
+    margin: 0 0 6px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
 
-select, input {
-width: 100%;
-padding: 12px 16px;
-background: var(–bg);
-border: 1px solid var(–border);
-border-radius: 12px;
-color: var(–text);
-font-family: ‘Inter’, sans-serif;
-font-size: 0.95rem;
-transition: all 0.3s;
-}
+  select, input[type="number"], input[type="text"], button{
+    width: 100%;
+    appearance: none;
+    -webkit-appearance: none;
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+  }
+  select:focus, input:focus, button:focus{ outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); background: var(--card); }
+  select:hover, input:hover{ border-color: var(--accent); }
 
-select:focus, input:focus {
-outline: none;
-border-color: var(–accent);
-box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-}
+  select{
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 34px;
+  }
 
-select:hover, input:hover {
-border-color: var(–accent);
-}
+  .rowline{ display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+  .muted{ color: var(--muted); }
+  .hint{ font-size: 0.8rem; color: var(--muted); margin-top: 6px; font-weight: 500; }
+  .warn{ color: var(--danger); font-size: 0.875rem; margin-top: 8px; display: none; font-weight: 600; padding: 8px 12px; background: rgba(239, 68, 68, 0.1); border-radius: 8px; }
 
-.result-box {
-background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), transparent);
-border: 1px solid var(–border);
-border-radius: 12px;
-padding: 24px;
-margin-bottom: 24px;
-display: flex;
-align-items: baseline;
-gap: 16px;
-flex-wrap: wrap;
-}
+  .searchWrap{ max-width: 260px; min-width: 200px; } /* smaller to avoid overlap */
+  @media (max-width: 900px){ .searchWrap{ max-width: 100%; } }
 
-.result-value {
-font-size: 3rem;
-font-weight: 900;
-background: linear-gradient(135deg, var(–accent), var(–accent-dark));
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
-background-clip: text;
-}
+  .result{
+    display: flex; align-items: baseline; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;
+    padding: 20px; background: linear-gradient(135deg, var(--accent-glow), transparent);
+    border-radius: 12px; border: 1px solid var(--border);
+  }
+  .result .big{ font-size: 2.4rem; font-weight: 900; letter-spacing: 0.5px; background: linear-gradient(135deg, var(--accent), var(--accent-hover)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: fadeIn 0.5s ease; }
+  .result .small{ font-size: 1rem; font-weight: 500; }
 
-.result-text {
-font-size: 1rem;
-color: var(–muted);
-}
+  .tableWrap{ margin-top: 20px; overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--border); border-radius: 12px; background: var(--bg); }
 
-.table-wrap {
-overflow-x: auto;
-border: 1px solid var(–border);
-border-radius: 12px;
-margin-top: 20px;
-}
+  table{ min-width: 720px; width: 100%; border-collapse: separate; border-spacing: 0; }
+  th, td{ padding: 12px 14px; border-bottom: 1px solid var(--border); text-align: left; white-space: nowrap; transition: all 0.2s ease; }
+  thead th{
+    font-size: 0.78rem; color: var(--muted); font-weight: 700; position: sticky; top: 0;
+    background: var(--card); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    z-index: 1; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  tbody tr{ transition: all 0.2s ease; }
+  tbody tr:hover{ background: var(--card-hover); }
+  tbody tr:last-child td{ border-bottom: 0; }
+  td.ok{ color: var(--success); font-weight: 700; font-variant-numeric: tabular-nums; }
+  td.err{ color: var(--danger); opacity: 0.5; }
+  td:first-child, th:first-child{ position: sticky; left: 0; background: var(--card); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 2; font-weight: 600; }
 
-table {
-width: 100%;
-min-width: 700px;
-border-collapse: collapse;
-}
+  .summary{
+    margin-top: 24px; padding: 24px; border: 1px solid var(--border); border-radius: var(--radius);
+    background: var(--card); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    animation: fadeIn 0.6s ease;
+  }
+  .summary strong { font-size: 1.05rem; font-weight: 800; letter-spacing: 0.3px; }
 
-th, td {
-padding: 14px 16px;
-text-align: left;
-border-bottom: 1px solid var(–border);
-}
+  .sum-grid{ display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
+  @media (max-width: 700px){ .sum-grid{ grid-template-columns: 1fr; } }
 
-th {
-font-size: 0.8rem;
-font-weight: 700;
-color: var(–muted);
-text-transform: uppercase;
-letter-spacing: 0.5px;
-background: var(–card);
-}
+  .srow{
+    display: flex; gap: 12px; align-items: center; justify-content: space-between;
+    background: var(--badge); border: 1px solid var(--badge-border); border-radius: 12px; padding: 12px 14px;
+    transition: all 0.3s ease;
+  }
+  .srow:hover { transform: translateX(4px); border-color: var(--accent); box-shadow: 0 4px 12px var(--accent-glow); }
+  .slabel{ font-weight: 600; color: var(--muted); font-size: 0.9rem; }
+  .sval{ font-variant-numeric: tabular-nums; font-weight: 700; font-size: 1rem; }
 
-tbody tr:hover {
-background: rgba(255, 255, 255, 0.02);
-}
+  .badges{ display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+  .badge{ background: linear-gradient(135deg, var(--badge), var(--badge-border)); border: 1px solid var(--badge-border); padding: 8px 12px; border-radius: 999px; font-size: 0.85rem; font-weight: 600; transition: all 0.3s ease; animation: fadeIn 0.7s ease; }
+  .badge:hover { transform: translateY(-2px); box-shadow: 0 4px 12px var(--accent-glow); }
 
-.ok {
-color: var(–success);
-font-weight: 700;
-}
+  .copybtn{ margin-left: auto; background: var(--accent); color: #fff; border-color: var(--accent); padding: 10px 16px; font-weight: 600; cursor: pointer; }
+  .copybtn:hover{ background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 4px 20px var(--accent-glow); }
 
-.err {
-color: var(–danger);
-opacity: 0.5;
-}
+  input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent); }
 
-.summary {
-background: var(–card);
-border: 1px solid var(–border);
-border-radius: 16px;
-padding: 24px;
-margin-top: 24px;
-}
-
-.summary-grid {
-display: grid;
-grid-template-columns: repeat(2, 1fr);
-gap: 12px;
-margin-top: 16px;
-}
-
-@media (max-width: 768px) {
-.summary-grid {
-grid-template-columns: 1fr;
-}
-}
-
-.summary-row {
-display: flex;
-justify-content: space-between;
-align-items: center;
-background: rgba(255, 255, 255, 0.03);
-border: 1px solid var(–border);
-padding: 14px 16px;
-border-radius: 12px;
-}
-
-.summary-label {
-font-weight: 600;
-color: var(–muted);
-font-size: 0.9rem;
-}
-
-.summary-value {
-font-weight: 700;
-font-size: 1rem;
-}
-
-.badges {
-display: flex;
-gap: 10px;
-flex-wrap: wrap;
-margin-top: 16px;
-}
-
-.badge {
-background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.1));
-border: 1px solid var(–border);
-padding: 8px 16px;
-border-radius: 50px;
-font-size: 0.85rem;
-font-weight: 600;
-}
-
-.copy-btn {
-background: var(–accent);
-color: white;
-border: none;
-padding: 10px 20px;
-border-radius: 50px;
-cursor: pointer;
-font-weight: 600;
-font-family: ‘Inter’, sans-serif;
-transition: all 0.3s;
-}
-
-.copy-btn:hover {
-background: var(–accent-dark);
-transform: translateY(-2px);
-}
-
-.flex-between {
-display: flex;
-justify-content: space-between;
-align-items: center;
-margin-bottom: 16px;
-}
-
-.checkbox-group {
-display: flex;
-gap: 16px;
-align-items: center;
-flex-wrap: wrap;
-}
-
-.checkbox-label {
-display: flex;
-gap: 8px;
-align-items: center;
-cursor: pointer;
-}
-
-input[type=“checkbox”] {
-width: 20px;
-height: 20px;
-cursor: pointer;
-accent-color: var(–accent);
-}
-
-.hint {
-font-size: 0.8rem;
-color: var(–muted);
-margin-top: 6px;
-}
-
-.footer {
-background: var(–card);
-border: 1px solid var(–border);
-border-radius: 16px;
-padding: 20px;
-margin-top: 32px;
-box-shadow: var(–shadow);
-}
-
-.footer-title {
-font-weight: 800;
-margin-bottom: 8px;
-font-size: 1.1rem;
-}
-
-.footer-text {
-color: var(–muted);
-font-size: 0.92rem;
-line-height: 1.6;
-}
+  .footer{ margin: 32px 0 16px; }
+  .foot-card{ background: var(--card); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px 24px; animation: fadeIn 0.8s ease; }
+  .foot-title{ font-weight: 800; letter-spacing: 0.3px; margin-bottom: 8px; font-size: 1.1rem; }
+  .foot-text{ color: var(--muted); font-size: 0.92rem; line-height: 1.6; }
 </style>
-
 </head>
 <body>
-<div class="container">
-  <div class="header">
-    <div class="logo">Residual Calculator - By Ricardo</div>
-    <button id="themeBtn" class="theme-toggle">Toggle Theme</button>
-  </div>
-
-  <div class="card">
-    <div class="grid grid-3">
-      <div class="form-group">
-        <label>Model Family</label>
-        <select id="familySel"></select>
-      </div>
-      <div class="form-group">
-        <label>Model Year</label>
-        <select id="yearSel"></select>
-      </div>
-      <div class="form-group">
-        <label>Trim</label>
-        <select id="trimSel"></select>
-        <div class="hint" id="trimCount"></div>
+  <div class="wrap">
+    <div class="top">
+      <div class="brand">
+        <div class="pill">Residual App — By Ricardo (11/25 Programs)</div>
+        <button id="themeBtn" class="theme" type="button">Dark Mode</button>
       </div>
     </div>
 
-```
-<div class="grid grid-3">
-  <div class="form-group">
-    <label>Search Trim</label>
-    <input id="trimSearch" type="text" placeholder="Filter by name or code">
-  </div>
-  <div class="form-group">
-    <label>Term (months)</label>
-    <select id="termSel"></select>
-  </div>
-  <div class="checkbox-group" style="margin-top: 28px;">
-    <label class="checkbox-label">
-      <input id="pacpoToggle" type="checkbox">
-      <span>+2% PACPO</span>
-    </label>
-    <label class="checkbox-label">
-      <input id="hideNA" type="checkbox">
-      <span>Hide N/A</span>
-    </label>
-  </div>
-</div>
+    <div class="card controls" id="controls">
+      <div class="grid g3">
+        <div>
+          <label>Model Family</label>
+          <select id="familySel"></select>
+        </div>
+        <div>
+          <label>Model Year</label>
+          <select id="yearSel"></select>
+        </div>
+        <div>
+          <label>Trim</label>
+          <select id="trimSel"></select>
+          <div class="hint" id="trimCount"></div>
+          <div class="warn" id="trimWarn">No trims found for this family/year. Check JSON spelling/case.</div>
+        </div>
+      </div>
 
-<div class="grid grid-2">
-  <div class="form-group">
-    <label>Miles at Inception</label>
-    <input id="odoInput" type="number" min="0" placeholder="e.g., 3450">
-  </div>
-  <div class="form-group">
-    <label>Miles per Year</label>
-    <select id="annualMilesSel"></select>
-  </div>
-</div>
-```
+      <div class="grid g3" style="margin-top: 12px">
+        <div class="searchWrap">
+          <label>Search Trim</label>
+          <input id="trimSearch" type="text" placeholder="Type to filter by name or code" />
+        </div>
+        <div>
+          <label>Term (months)</label>
+          <select id="termSel"></select>
+        </div>
+        <div class="rowline" style="margin-top: 28px">
+          <label class="rowline" style="gap: 8px;">
+            <input id="pacpoToggle" type="checkbox" />
+            <span>+2% PACPO</span>
+          </label>
+          <label class="rowline" style="gap: 8px;">
+            <input id="hideNA" type="checkbox" />
+            <span>Hide N/A</span>
+          </label>
+          <div class="pill" id="codeBadge" style="font-size: 0.82rem; padding: 6px 12px;">MY Code: -</div>
+        </div>
+      </div>
 
-  </div>
-
-  <div class="card">
-    <div class="result-box">
-      <div class="result-value" id="finalOut">-</div>
-      <div class="result-text" id="detailOut">Select options to calculate</div>
+      <div class="grid g3" style="margin-top: 12px">
+        <div>
+          <label>Miles at Inception</label>
+          <input id="odoInput" type="number" min="0" step="1" placeholder="e.g., 3,450" />
+          <div class="hint">Adjustment shown in summary even when it is +0%.</div>
+        </div>
+        <div>
+          <label>Miles per Year</label>
+          <select id="annualMilesSel"></select>
+        </div>
+        <div>
+          <label>MSRP ($)</label>
+          <input id="msrpInput" type="number" min="0" step="100" placeholder="e.g., 142,000" />
+        </div>
+      </div>
     </div>
 
-```
-<div class="table-wrap">
-  <table>
-    <thead><tr id="theadRow"></tr></thead>
-    <tbody><tr id="tvalRow"></tr></tbody>
-  </table>
-</div>
+    <div class="card" style="margin-top: 20px">
+      <div class="result">
+        <div class="big" id="finalOut">-</div>
+        <div class="small muted" id="detailOut">Select a term to calculate</div>
+        <div class="small" id="trueOut" style="font-weight:700;"></div>
+      </div>
 
-<div class="summary">
-  <div class="flex-between">
-    <strong>Summary</strong>
-    <button id="copyBtn" class="copy-btn">Copy</button>
-  </div>
+      <div class="tableWrap">
+        <table id="residualTable">
+          <thead><tr id="theadRow"></tr></thead>
+          <tbody><tr id="tvalRow"></tr></tbody>
+        </table>
+      </div>
 
-  <div class="summary-grid">
-    <div class="summary-row">
-      <span class="summary-label">Model Year</span>
-      <span class="summary-value" id="sumYear">-</span>
-    </div>
-    <div class="summary-row">
-      <span class="summary-label">Family</span>
-      <span class="summary-value" id="sumFamily">-</span>
-    </div>
-    <div class="summary-row">
-      <span class="summary-label">Trim</span>
-      <span class="summary-value" id="sumTrim">-</span>
-    </div>
-    <div class="summary-row">
-      <span class="summary-label">Term</span>
-      <span class="summary-value" id="sumTerm">-</span>
-    </div>
-    <div class="summary-row">
-      <span class="summary-label">Miles/Year</span>
-      <span class="summary-value" id="sumMilesYear">-</span>
-    </div>
-    <div class="summary-row">
-      <span class="summary-label">Odometer</span>
-      <span class="summary-value" id="sumOdo">-</span>
-    </div>
-  </div>
+      <div class="summary" id="summaryBox">
+        <div class="rowline">
+          <strong>Summary</strong>
+          <button id="copyBtn" class="theme copybtn" type="button">Copy</button>
+        </div>
 
-  <div class="badges" id="badgeRow"></div>
+        <div class="srow" style="margin-top: 16px; border: 2px solid var(--accent); box-shadow: var(--glow);">
+          <span class="slabel" style="color: var(--accent);">Final Residual</span>
+          <span class="sval" id="sumFinal" style="font-size: 1.2rem; color: var(--accent);">-</span>
+        </div>
 
-  <div class="summary-row" style="margin-top: 16px; border: 2px solid var(--accent);">
-    <span class="summary-label" style="color: var(--accent);">Final Residual</span>
-    <span class="summary-value" id="sumFinal" style="font-size: 1.3rem; color: var(--accent);">-</span>
-  </div>
-</div>
-```
+        <div class="sum-grid">
+          <div class="srow"><span class="slabel">Model Year</span><span class="sval" id="sumYear">-</span></div>
+          <div class="srow"><span class="slabel">Family</span><span class="sval" id="sumFamily">-</span></div>
+          <div class="srow"><span class="slabel">Trim</span><span class="sval" id="sumTrim">-</span></div>
+          <div class="srow"><span class="slabel">Term</span><span class="sval" id="sumTerm">-</span></div>
+          <div class="srow"><span class="slabel">Miles/Year</span><span class="sval" id="sumMilesYear">-</span></div>
+          <div class="srow"><span class="slabel">Odometer</span><span class="sval" id="sumOdo">-</span></div>
+          <div class="srow"><span class="slabel">MSRP</span><span class="sval" id="sumMsrp">-</span></div>
+          <div class="srow"><span class="slabel">True Residual</span><span class="sval" id="sumTrue">-</span></div>
+        </div>
 
-  </div>
+        <div class="badges" id="badgeRow" aria-label="Adjustments"></div>
+      </div>
+    </div>
 
-  <div class="footer">
-    <div class="footer-title">Made by Ricardo</div>
-    <div class="footer-text">
-      This tool is proprietary. Redistribution, copying, or use without explicit written consent is prohibited.
-      <strong>Ask first. Respect the craft.</strong>
+    <div class="footer">
+      <div class="foot-card">
+        <div class="foot-title">Made by Ricardo</div>
+        <div class="foot-text">
+          This tool is proprietary. Redistribution, copying, or use without Ricardo's explicit written consent is prohibited.
+          By viewing or using this app, you agree not to duplicate the data, design, or logic in any form. <strong>Ask first. Respect the craft.</strong>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
 <script>
-(function() {
+(function(){
+  // THEME SETUP
   var themeBtn = document.getElementById('themeBtn');
+  var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+  themeBtn.textContent = prefersDark ? 'Light Mode' : 'Dark Mode';
+  themeBtn.addEventListener('click', function(){
+    var cur = document.documentElement.getAttribute('data-theme');
+    var next = cur === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', next);
+    themeBtn.textContent = next === 'light' ? 'Dark Mode' : 'Light Mode';
+  });
+
+  // DOM HOOKS
   var familySel = document.getElementById('familySel');
   var yearSel = document.getElementById('yearSel');
   var trimSel = document.getElementById('trimSel');
   var trimSearch = document.getElementById('trimSearch');
   var trimCount = document.getElementById('trimCount');
+  var trimWarn = document.getElementById('trimWarn');
   var termSel = document.getElementById('termSel');
   var pacpoToggle = document.getElementById('pacpoToggle');
   var hideNA = document.getElementById('hideNA');
+  var codeBadge = document.getElementById('codeBadge');
   var finalOut = document.getElementById('finalOut');
   var detailOut = document.getElementById('detailOut');
+  var trueOut = document.getElementById('trueOut');
   var theadRow = document.getElementById('theadRow');
   var tvalRow = document.getElementById('tvalRow');
   var annualMilesSel = document.getElementById('annualMilesSel');
   var odoInput = document.getElementById('odoInput');
+  var msrpInput = document.getElementById('msrpInput');
   var sumYear = document.getElementById('sumYear');
   var sumFamily = document.getElementById('sumFamily');
   var sumTrim = document.getElementById('sumTrim');
   var sumTerm = document.getElementById('sumTerm');
   var sumMilesYear = document.getElementById('sumMilesYear');
   var sumOdo = document.getElementById('sumOdo');
+  var sumMsrp = document.getElementById('sumMsrp');
+  var sumTrue = document.getElementById('sumTrue');
   var sumFinal = document.getElementById('sumFinal');
   var badgeRow = document.getElementById('badgeRow');
   var copyBtn = document.getElementById('copyBtn');
 
-  var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
-
-  themeBtn.addEventListener('click', function() {
-    var current = document.documentElement.getAttribute('data-theme');
-    var next = current === 'light' ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', next);
-  });
-
+  // LOAD DATA
+  var params = new URLSearchParams(location.search);
+  var jsonFile = params.get('data') || 'porsche_residuals_all.json';
+  var cacheBuster = 't=' + Date.now();
   var data;
-  var MONTHS;
-  var PACPO;
-  var fullTrimList = [];
 
-  fetch('porsche_residuals_all.json?v=' + Date.now())
-    .then(function(res) { return res.json(); })
-    .then(function(json) {
-      data = json;
-      MONTHS = data.months || ["12","18","24","27","30","36","39","42","48","51","60"];
-      PACPO = data.pacpo_bonus_percent || 2;
+  fetch(jsonFile + '?' + cacheBuster, {cache: 'no-store'})
+    .then(function(res){
+      if(!res.ok) throw new Error('HTTP ' + res.status + ' loading ' + jsonFile);
+      return res.json();
+    })
+    .then(function(j){
+      data = j;
+      window.__data = data;
       init();
     })
-    .catch(function(err) {
-      alert('Failed to load JSON: ' + err.message);
+    .catch(function(err){
+      console.error(err);
+      alert('Failed to load JSON: ' + err.message + '\nMake sure "' + jsonFile + '" is in the same folder as this HTML on GitHub Pages.');
     });
 
-  function normalizeYearKey(k) {
+  // HELPERS
+  var MONTHS, PACPO, fullTrimList = [];
+
+  function normalizeYearKey(k){
     var s = String(k).trim();
-    var mPlain = s.match(/^(20\d{2})$/);
+    var mPlain = s.match(/^(20\\d{2})$/);
     if (mPlain) return { display: 'MY' + mPlain[1].slice(-2), key: k };
-    var mMY = s.toUpperCase().replace(/\s+/g,'').match(/^MY(\d{2})$/);
+    var mMY = s.toUpperCase().replace(/\\s+/g,'').match(/^MY(\\d{2})$/);
     if (mMY) return { display: 'MY' + mMY[1], key: k };
     return { display: s, key: k };
   }
 
-  function getCaseInsensitive(obj, name) {
-    if (!obj || typeof obj !== "object") return undefined;
-    var target = String(name).replace(/\s+/g,'').toLowerCase();
+  function getCaseInsensitive(obj, name){
+    if(!obj || typeof obj !== "object") return undefined;
+    var target = String(name).replace(/\\s+/g,'').toLowerCase();
     var keys = Object.keys(obj);
-    for (var i = 0; i < keys.length; i++) {
-      var norm = keys[i].replace(/\s+/g,'').toLowerCase();
-      if (norm === target) return obj[keys[i]];
+    for(var i=0;i<keys.length;i++){
+      var norm = keys[i].replace(/\\s+/g,'').toLowerCase();
+      if(norm === target) return obj[keys[i]];
     }
     return undefined;
   }
 
-  function getVirtualFamilies() {
+  function getVirtualFamilies(){
     var out = new Set();
     var models = data.models || {};
     var keys = Object.keys(models);
-    for (var i = 0; i < keys.length; i++) {
+    for(var i=0;i<keys.length;i++){
       var f = keys[i];
-      if (f === '718') {
-        var cay = getCaseInsensitive(models['718'], 'Cayman');
-        var box = getCaseInsensitive(models['718'], 'Boxster');
+      if(f === '718'){
+        var cay = getCaseInsensitive(models['718'],'Cayman');
+        var box = getCaseInsensitive(models['718'],'Boxster');
         if (cay) out.add('718 Cayman');
         if (box) out.add('718 Boxster');
       } else {
         out.add(f);
       }
     }
-    if (models['Cayman']) out.add('718 Cayman');
-    if (models['Boxster']) out.add('718 Boxster');
+    if(models['Cayman']) out.add('718 Cayman');
+    if(models['Boxster']) out.add('718 Boxster');
     var order = ['911','718 Cayman','718 Boxster','Taycan','Macan','Cayenne','Panamera'];
-    return Array.from(out).sort(function(a, b) {
-      return order.indexOf(a) - order.indexOf(b);
-    });
+    return Array.from(out).sort(function(a,b){ return order.indexOf(a) - order.indexOf(b); });
   }
 
-  function branchForFamily(famDisp) {
+  function branchForFamily(famDisp){
     var models = data.models || {};
-    if (famDisp === '718 Cayman') {
-      return getCaseInsensitive(models['718'] || {}, 'Cayman') || models['Cayman'] || {};
+    if (famDisp === '718 Cayman'){
+      return getCaseInsensitive(models['718']||{}, 'Cayman') || models['Cayman'] || {};
     }
-    if (famDisp === '718 Boxster') {
-      return getCaseInsensitive(models['718'] || {}, 'Boxster') || models['Boxster'] || {};
+    if (famDisp === '718 Boxster'){
+      return getCaseInsensitive(models['718']||{}, 'Boxster') || models['Boxster'] || {};
     }
     return models[famDisp] || {};
   }
 
-  function yearsForFamily(famDisp) {
+  function yearsForFamily(famDisp){
     var out = new Set();
     var branch = branchForFamily(famDisp);
     var keys = Object.keys(branch);
-    for (var i = 0; i < keys.length; i++) {
+    for(var i=0;i<keys.length;i++){
       out.add(normalizeYearKey(keys[i]).display);
     }
-    return Array.from(out).sort(function(a, b) {
-      var ay = parseInt(a.replace(/\D/g,''), 10);
-      var by = parseInt(b.replace(/\D/g,''), 10);
+    return Array.from(out).sort(function(a,b){
+      var ay = parseInt(a.replace(/\\D/g,''),10);
+      var by = parseInt(b.replace(/\\D/g,''),10);
       if (isNaN(ay) || isNaN(by)) return b.localeCompare(a);
       return by - ay;
     });
   }
 
-  function populateFamilies() {
+  function populateFamilies(){
     familySel.innerHTML = '';
     var families = getVirtualFamilies();
-    for (var i = 0; i < families.length; i++) {
+    families.forEach(function(f){
       var opt = document.createElement('option');
-      opt.value = families[i];
-      opt.textContent = families[i];
+      opt.value = f; opt.textContent = f;
       familySel.appendChild(opt);
-    }
+    });
   }
 
-  function populateYears() {
+  function populateYears(){
     yearSel.innerHTML = '';
     var years = yearsForFamily(familySel.value);
-    for (var i = 0; i < years.length; i++) {
+    years.forEach(function(y){
       var opt = document.createElement('option');
-      opt.value = years[i];
-      opt.textContent = years[i];
+      opt.value = y; opt.textContent = y;
       yearSel.appendChild(opt);
-    }
+    });
   }
 
-  function collectTrimsForYear() {
+  function collectTrimsForYear(){
     fullTrimList = [];
     var branch = branchForFamily(familySel.value);
     var dispYear = yearSel.value;
     var keys = Object.keys(branch);
     var yearKeys = [];
-    for (var i = 0; i < keys.length; i++) {
-      if (normalizeYearKey(keys[i]).display === dispYear) {
+    for(var i=0;i<keys.length;i++){
+      if(normalizeYearKey(keys[i]).display === dispYear){
         yearKeys.push(keys[i]);
       }
     }
     var yearKey = yearKeys[0];
     var rows = (yearKey && branch[yearKey]) || {};
     var entries = Object.entries(rows);
-    for (var i = 0; i < entries.length; i++) {
-      fullTrimList.push({
-        code: entries[i][0],
-        model: entries[i][1].model || entries[i][0]
-      });
+    for(var j=0;j<entries.length;j++){
+      var code = entries[j][0];
+      var row = entries[j][1];
+      fullTrimList.push({code: code, model: row.model || code});
     }
   }
 
-  function populateTrims(filterTerm) {
-    if (filterTerm === undefined) filterTerm = "";
+  function populateTrims(filterTerm){
+    if(filterTerm === undefined) filterTerm = "";
     trimSel.innerHTML = '';
     var term = filterTerm.trim().toLowerCase();
     var filtered = [];
-    for (var i = 0; i < fullTrimList.length; i++) {
+    for(var i=0;i<fullTrimList.length;i++){
       var hay = (fullTrimList[i].model + " " + fullTrimList[i].code).toLowerCase();
-      if (hay.indexOf(term) !== -1) {
-        filtered.push(fullTrimList[i]);
-      }
+      if(hay.indexOf(term) !== -1){ filtered.push(fullTrimList[i]); }
     }
-    for (var i = 0; i < filtered.length; i++) {
+    filtered.forEach(function(item){
       var opt = document.createElement('option');
-      opt.value = filtered[i].code;
-      opt.textContent = filtered[i].model;
+      opt.value = item.code;
+      opt.textContent = item.model;
+      opt.dataset.code = item.code;
       trimSel.appendChild(opt);
-    }
-    trimCount.textContent = filtered.length + ' trim(s) available';
+    });
+    trimCount.textContent = filtered.length ? (filtered.length + ' trim(s) available') : 'No trims match filter';
+    trimWarn.style.display = filtered.length ? 'none' : 'block';
   }
 
-  function populateTerms() {
+  function populateTerms(){
     termSel.innerHTML = '';
-    for (var i = 0; i < MONTHS.length; i++) {
+    MONTHS = data.months || ["12","18","24","27","30","36","39","42","48","51","60"];
+    MONTHS.forEach(function(m){
       var opt = document.createElement('option');
-      opt.value = MONTHS[i];
-      opt.textContent = MONTHS[i] + ' months';
+      opt.value = m; opt.textContent = m + ' months';
       termSel.appendChild(opt);
-    }
+    });
   }
 
-  function populateAnnualMiles() {
+  function populateAnnualMiles(){
     annualMilesSel.innerHTML = '';
-    var milesMap = (data.annual_mileage_adjustments_percent && data.annual_mileage_adjustments_percent.miles_per_year) || {
+    var milesMap = (data && data.annual_mileage_adjustments_percent && data.annual_mileage_adjustments_percent.miles_per_year) || {
       "2500":6,"5000":5,"7500":4,"10000":3,"12000":2,"15000":0
     };
-    var keys = Object.keys(milesMap).map(function(k) {
-      return parseInt(k, 10);
-    }).sort(function(a, b) {
-      return a - b;
-    });
-    for (var i = 0; i < keys.length; i++) {
-      var opt = document.createElement('option');
-      opt.value = String(keys[i]);
-      opt.textContent = keys[i].toLocaleString() + ' mi/yr';
-      annualMilesSel.appendChild(opt);
-    }
+    Object.keys(milesMap).map(function(k){ return parseInt(k,10); }).sort(function(a,b){ return a-b; })
+      .forEach(function(n){
+        var opt = document.createElement('option');
+        opt.value = String(n);
+        opt.textContent = n.toLocaleString() + ' mi/yr';
+        annualMilesSel.appendChild(opt);
+      });
     annualMilesSel.value = "15000";
   }
 
-  function parseRange(str) {
-    if (!str) return null;
-    var s = str.replace(/,/g,'').replace(/\s/g,'');
+  function parseRange(str){
+    if(!str) return null;
+    var s = str.replace(/,/g,'').replace(/\\s/g,'');
     var parts = s.split(/–|-/);
-    if (parts.length !== 2) return null;
-    var a = parseInt(parts[0], 10);
-    var b = parseInt(parts[1], 10);
-    if (isNaN(a) || isNaN(b)) return null;
-    return [a, b];
+    if(parts.length !== 2) return null;
+    var a = parseInt(parts[0],10);
+    var b = parseInt(parts[1],10);
+    if(isNaN(a) || isNaN(b)) return null;
+    return [a,b];
   }
 
-  function findInceptionAdj(myKey, odo) {
-    var bands = (data.mileage_at_inception_adjustments_percent && data.mileage_at_inception_adjustments_percent[myKey]) || null;
-    if (!bands || odo == null) return 0;
-    for (var i = 0; i < bands.length; i++) {
+  function findInceptionAdj(myKey, odo){
+    var bands = (data && data.mileage_at_inception_adjustments_percent && data.mileage_at_inception_adjustments_percent[myKey]) || null;
+    if(!bands || odo == null) return 0;
+    for(var i=0;i<bands.length;i++){
       var rng = parseRange(bands[i].miles_range);
-      if (!rng) continue;
-      if (odo >= rng[0] && odo <= rng[1]) return bands[i].adj || 0;
+      if(!rng) continue;
+      if(odo >= rng[0] && odo <= rng[1]) return bands[i].adj || 0;
     }
     return 0;
   }
 
-  function buildHeader(visibleMonths) {
+  function buildHeader(visibleMonths){
     theadRow.innerHTML = '';
     var th1 = document.createElement('th');
     th1.textContent = 'Trim / Term';
     theadRow.appendChild(th1);
-    for (var i = 0; i < visibleMonths.length; i++) {
+    for(var i=0;i<visibleMonths.length;i++){
       var th = document.createElement('th');
       th.textContent = visibleMonths[i] + ' mo';
       theadRow.appendChild(th);
     }
   }
 
-  function visibleMonthsFor(entry) {
-    if (!hideNA.checked) return MONTHS.slice();
+  function visibleMonthsFor(entry){
+    if(!hideNA.checked) return MONTHS.slice();
     var result = [];
-    for (var i = 0; i < MONTHS.length; i++) {
-      if (entry && entry.residuals && entry.residuals[MONTHS[i]] != null) {
+    for(var i=0;i<MONTHS.length;i++){
+      if(entry && entry.residuals && entry.residuals[MONTHS[i]] != null){
         result.push(MONTHS[i]);
       }
     }
     return result;
   }
 
-  function compute() {
+  function compute(){
     var fam = familySel.value;
     var branch = branchForFamily(fam);
     var dispYear = yearSel.value;
     var keys = Object.keys(branch);
     var yearKeys = [];
-    for (var i = 0; i < keys.length; i++) {
-      if (normalizeYearKey(keys[i]).display === dispYear) {
+    for(var i=0;i<keys.length;i++){
+      if(normalizeYearKey(keys[i]).display === dispYear){
         yearKeys.push(keys[i]);
       }
     }
@@ -760,24 +669,32 @@ line-height: 1.6;
     var code = trimSel.value;
     var term = termSel.value;
     var milesPerYear = parseInt(annualMilesSel.value, 10);
-    var odo = odoInput.value ? parseInt(odoInput.value.replace(/,/g,''), 10) : null;
+    var odo = odoInput.value ? parseInt(String(odoInput.value).replace(/,/g,''), 10) : null;
 
-    if (!yrKey || !code) return;
+    if(!yrKey || !code){
+      finalOut.textContent = '-';
+      detailOut.textContent = 'Select family/year/trim';
+      trueOut.textContent = '';
+      return;
+    }
 
     var entry = branch[yrKey][code];
     var base = term ? ((entry && entry.residuals && entry.residuals[term]) || null) : null;
+
+    PACPO = data.pacpo_bonus_percent || 2;
     var pacpoAdj = pacpoToggle.checked ? PACPO : 0;
-    var milesMap = (data.annual_mileage_adjustments_percent && data.annual_mileage_adjustments_percent.miles_per_year) || {};
+
+    var milesMap = (data && data.annual_mileage_adjustments_percent && data.annual_mileage_adjustments_percent.miles_per_year) || {};
     var annualAdj = 0;
-    if (base !== null && parseInt(term || "0", 10) >= 24) {
+    if(base !== null && parseInt(term || "0", 10) >= 24){
       annualAdj = milesMap[String(milesPerYear)] || 0;
     }
 
-    var inceptionKeyCandidates = [yrKey, dispYear, dispYear.replace(/\s+/g,'')];
+    var inceptionKeyCandidates = [yrKey, dispYear, dispYear.replace(/\\s+/g,'')];
     var inceptionAdj = 0;
-    for (var i = 0; i < inceptionKeyCandidates.length; i++) {
-      var bands = (data.mileage_at_inception_adjustments_percent && data.mileage_at_inception_adjustments_percent[inceptionKeyCandidates[i]]) || null;
-      if (bands) {
+    for(var i=0;i<inceptionKeyCandidates.length;i++){
+      var bands = (data && data.mileage_at_inception_adjustments_percent && data.mileage_at_inception_adjustments_percent[inceptionKeyCandidates[i]]) || null;
+      if(bands){
         inceptionAdj = findInceptionAdj(inceptionKeyCandidates[i], odo);
         break;
       }
@@ -788,17 +705,19 @@ line-height: 1.6;
 
     var final = (base === null || term == null) ? null : (base + pacpoAdj + annualAdj + inceptionAdj);
     finalOut.textContent = final === null ? '-' : final + '%';
-    detailOut.textContent = final === null ? 'Select a term to calculate' : 'Final residual with all adjustments';
+    detailOut.textContent = final === null ? 'Select a term to calculate' : 'Final residual with all adjustments applied';
+    codeBadge.textContent = 'MY Code: ' + (code || '-');
 
+    // table body
     tvalRow.innerHTML = '';
     var lead = document.createElement('td');
     lead.textContent = (entry && entry.model) || '-';
     tvalRow.appendChild(lead);
-    for (var i = 0; i < monthsShown.length; i++) {
+    for(var i=0;i<monthsShown.length;i++){
       var td = document.createElement('td');
       var v = entry && entry.residuals && entry.residuals[monthsShown[i]];
       var shown = '-';
-      if (v !== null && v !== undefined) {
+      if(v !== null && v !== undefined){
         var mN = parseInt(monthsShown[i], 10);
         var aAdj = (mN >= 24) ? (milesMap[String(milesPerYear)] || 0) : 0;
         var total = v + pacpoAdj + aAdj + inceptionAdj;
@@ -811,45 +730,54 @@ line-height: 1.6;
       tvalRow.appendChild(td);
     }
 
+    // summary
     sumYear.textContent = dispYear || '-';
     sumFamily.textContent = fam || '-';
     sumTrim.textContent = (entry && entry.model) || '-';
-    sumTerm.textContent = term ? term + ' mo' : '-';
-    sumMilesYear.textContent = isFinite(milesPerYear) ? milesPerYear.toLocaleString() + ' mi/yr' : '-';
+    sumTerm.textContent = term ? (term + ' mo') : '-';
+    sumMilesYear.textContent = Number.isFinite(milesPerYear) ? milesPerYear.toLocaleString() + ' mi/yr' : '-';
     sumOdo.textContent = (odo != null && !isNaN(odo)) ? odo.toLocaleString() + ' mi' : '-';
 
+    // MSRP + True Residual
+    var msrp = msrpInput.value ? Number(msrpInput.value) : null;
+    sumMsrp.textContent = (msrp != null && !isNaN(msrp)) ? ('$' + msrp.toLocaleString()) : '-';
+    var trueResidual = (final != null && msrp != null && !isNaN(msrp)) ? Math.round(msrp * (final/100)) : null;
+    sumTrue.textContent = (trueResidual != null) ? ('$' + trueResidual.toLocaleString()) : '-';
+    trueOut.textContent = (trueResidual != null) ? ('True Residual: $' + trueResidual.toLocaleString()) : '';
+
+    // badges
     badgeRow.innerHTML = '';
-    if (base !== null && term) {
+    if(base !== null && term){
       var b = document.createElement('div');
       b.className = 'badge';
       b.textContent = 'Base ' + base + '%';
       badgeRow.appendChild(b);
     }
-    if (pacpoToggle.checked) {
-      var b = document.createElement('div');
-      b.className = 'badge';
-      b.textContent = '+' + PACPO + '% PACPO';
-      badgeRow.appendChild(b);
+    if(pacpoToggle.checked){
+      var b2 = document.createElement('div');
+      b2.className = 'badge';
+      b2.textContent = '+' + PACPO + '% PACPO';
+      badgeRow.appendChild(b2);
     }
-    if (term && parseInt(term, 10) >= 24) {
+    if(term && parseInt(term, 10) >= 24){
       var a = document.createElement('div');
       a.className = 'badge';
-      var adj = annualAdj >= 0 ? '+' + annualAdj + '%' : annualAdj + '%';
+      var adj = annualAdj >= 0 ? ('+' + annualAdj + '%') : (annualAdj + '%');
       a.textContent = adj + ' Annual Miles';
       badgeRow.appendChild(a);
     }
-    if (odo != null && !isNaN(odo)) {
-      var i = document.createElement('div');
-      i.className = 'badge';
-      var adj = inceptionAdj >= 0 ? '+' + inceptionAdj + '%' : inceptionAdj + '%';
-      i.textContent = adj + ' Inception';
-      badgeRow.appendChild(i);
+    if(odo != null && !isNaN(odo)){
+      var iDiv = document.createElement('div');
+      iDiv.className = 'badge';
+      var iadj = inceptionAdj >= 0 ? ('+' + inceptionAdj + '%') : (inceptionAdj + '%');
+      iDiv.textContent = iadj + ' Inception';
+      badgeRow.appendChild(iDiv);
     }
 
     sumFinal.textContent = final === null ? '-' : final + '%';
   }
 
-  copyBtn.addEventListener('click', function() {
+  copyBtn.addEventListener('click', function(){
     var text = [
       'Year: ' + sumYear.textContent,
       'Family: ' + sumFamily.textContent,
@@ -857,53 +785,53 @@ line-height: 1.6;
       'Term: ' + sumTerm.textContent,
       'Miles/Year: ' + sumMilesYear.textContent,
       'Odometer: ' + sumOdo.textContent,
-      'Final Residual: ' + sumFinal.textContent
+      'MSRP: ' + sumMsrp.textContent,
+      'Final Residual: ' + sumFinal.textContent,
+      'True Residual: ' + sumTrue.textContent
     ].join(' | ');
-    navigator.clipboard.writeText(text).then(function() {
+    navigator.clipboard.writeText(text).then(function(){
       var old = copyBtn.textContent;
       copyBtn.textContent = 'Copied!';
-      setTimeout(function() {
-        copyBtn.textContent = old;
-      }, 1200);
+      setTimeout(function(){ copyBtn.textContent = old; }, 1200);
     });
   });
 
-  function init() {
+  function init(){
+    MONTHS = data.months || ["12","18","24","27","30","36","39","42","48","51","60"];
+    PACPO = data.pacpo_bonus_percent || 2;
     populateFamilies();
     populateYears();
     populateTerms();
     populateAnnualMiles();
     collectTrimsForYear();
-    populateTrims();
+    populateTrims('');
     compute();
   }
 
-  familySel.addEventListener('change', function() {
+  // EVENTS
+  familySel.addEventListener('change', function(){
     populateYears();
     collectTrimsForYear();
     populateTrims(trimSearch.value);
     compute();
   });
-
-  yearSel.addEventListener('change', function() {
+  yearSel.addEventListener('change', function(){
     collectTrimsForYear();
     populateTrims(trimSearch.value);
     compute();
   });
-
-  trimSearch.addEventListener('input', function() {
+  trimSearch.addEventListener('input', function(){
     populateTrims(trimSearch.value);
     compute();
   });
-
   trimSel.addEventListener('change', compute);
   termSel.addEventListener('change', compute);
   pacpoToggle.addEventListener('change', compute);
   hideNA.addEventListener('change', compute);
   annualMilesSel.addEventListener('change', compute);
   odoInput.addEventListener('input', compute);
+  msrpInput.addEventListener('input', compute);
 })();
 </script>
-
 </body>
 </html>
