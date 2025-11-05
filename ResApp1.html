@@ -327,7 +327,8 @@
     display: grid;
     gap: 18px;
   }
-  
+  .grid > * { min-width: 0; } /* prevent input overflow/overlap on iOS */
+
   .g4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   .g3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .g2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -411,6 +412,7 @@
   .searchWrap {
     max-width: 280px;
     min-width: 220px;
+    width: 100%;
   }
   
   .rowline {
@@ -548,6 +550,7 @@
     animation: scaleIn 0.8s ease;
     animation-delay: 0.3s;
     animation-fill-mode: both;
+    scroll-margin-top: 96px; /* so jump-to-summary isn't hidden under sticky header */
   }
   
   .sum-grid {
@@ -610,6 +613,18 @@
     font-weight: 800;
     font-size: 1.1rem;
     color: var(--text-primary);
+  }
+
+  /* MSRP × RV% label/value styling (live summary line) */
+  .rv-label{
+    color:#bfa7ff;          /* light purple per request */
+    font-family:inherit;    /* match surrounding font */
+    font-weight:700;
+    letter-spacing:0.02em;
+  }
+  .rv-value{
+    font-family:inherit;
+    font-weight:800;
   }
   
   .badges {
@@ -826,12 +841,14 @@
             <span class="slabel">MSRP</span><span class="sval" id="sumMsrp">—</span>
           </div>
           <div class="srow"><span class="slabel">MSRP × RV%</span><span class="sval" id="sumTrue">—</span></div>
-          <div class="srow">
-            <span class="slabel">Value Index</span>
-            <span class="sval" id="sumLvi" title="Higher is better">—</span>
+          <div class="srow" style="flex-direction:column;align-items:flex-start;">
+            <div style="width:100%;display:flex;justify-content:space-between;align-items:center;">
+              <span class="slabel">Value Index</span>
+              <span class="sval" id="sumLvi" title="Higher is better">—</span>
+            </div>
+            <div class="hint" id="lviHelp" style="margin-top:6px;">*The Higher the Lease Value Index the better</div>
           </div>
         </div>
-        <div class="hint" id="lviHelp" style="margin-top:12px;text-align:center;">💡 Higher Value Index = Better Deal</div>
 
         <div class="badges" id="badgeRow" aria-label="Adjustments"></div>
       </div>
@@ -1269,7 +1286,11 @@
     if (sumMsrp) sumMsrp.textContent = (msrp != null && !isNaN(msrp)) ? ('$' + msrp.toLocaleString()) : '—';
     var trueResidual = (final != null && msrp != null && !isNaN(msrp)) ? Math.round(msrp * (final/100)) : null;
     sumTrue.textContent = (trueResidual != null) ? ('$' + trueResidual.toLocaleString()) : '—';
-    trueOut.textContent = (trueResidual != null) ? ('MSRP × RV% = $' + trueResidual.toLocaleString()) : '';
+
+    /* Live summary line: purple label + value with matching font */
+    trueOut.innerHTML = (trueResidual != null)
+      ? ('<span class="rv-label">MSRP × RV% = </span><span class="rv-value">$' + trueResidual.toLocaleString() + '</span>')
+      : '';
 
     badgeRow.innerHTML = '';
     if(base !== null && term){ addBadge('Base ' + base + '%'); }
