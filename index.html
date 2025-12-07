@@ -1477,6 +1477,60 @@ if(document.readyState==='complete'||document.readyState==='interactive')boot();
 })();
 </script>
 
+  <!-- Password Overlay -->
+  <div id="password-overlay"
+       style="
+        position: fixed;
+        inset: 0;
+        background: #050608;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 9999;
+       ">
+    <div style="text-align: center; max-width: 320px; padding: 24px; border-radius: 12px; background: #141821; box-shadow: 0 10px 30px rgba(0,0,0,0.7);">
+      <h2 style="margin: 0 0 12px; font-family: system-ui, -apple-system, BlinkMacSystemFont;">
+        Residual App – Login
+      </h2>
+      <p style="margin: 0 0 16px; font-size: 14px; opacity: 0.8;">
+        Enter the access password to continue.
+      </p>
+      <form id="password-form">
+        <input id="password-input"
+               type="password"
+               placeholder="Password"
+               autocomplete="off"
+               style="
+                width: 100%;
+                padding: 10px 12px;
+                border-radius: 8px;
+                border: 1px solid #333;
+                background:#0c0f16;
+                color:#fff;
+               " />
+        <div id="password-error"
+             style="margin-top: 8px; font-size: 12px; color:#ff6b6b; min-height: 16px;"></div>
+        <button type="submit"
+                style="
+                  margin-top: 14px;
+                  width: 100%;
+                  padding: 10px 12px;
+                  border-radius: 8px;
+                  border: none;
+                  background: #e50914;
+                  color: #fff;
+                  font-weight: 600;
+                  cursor: pointer;
+                ">
+          Enter
+        </button>
+      </form>
+    </div>
+  </div>
+  <!-- end Password Overlay -->
+  
+
 <script>
 (function () {
   const CORRECT_PASSWORD = "porsche123";
@@ -1539,59 +1593,6 @@ if(document.readyState==='complete'||document.readyState==='interactive')boot();
     };
 </script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
-
-  <!-- Password Overlay -->
-  <div id="password-overlay"
-       style="
-        position: fixed;
-        inset: 0;
-        background: #050608;
-        color: #fff;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-       ">
-    <div style="text-align: center; max-width: 320px; padding: 24px; border-radius: 12px; background: #141821; box-shadow: 0 10px 30px rgba(0,0,0,0.7);">
-      <h2 style="margin: 0 0 12px; font-family: system-ui, -apple-system, BlinkMacSystemFont;">
-        Residual App – Login
-      </h2>
-      <p style="margin: 0 0 16px; font-size: 14px; opacity: 0.8;">
-        Enter the access password to continue.
-      </p>
-      <form id="password-form">
-        <input id="password-input"
-               type="password"
-               placeholder="Password"
-               autocomplete="off"
-               style="
-                width: 100%;
-                padding: 10px 12px;
-                border-radius: 8px;
-                border: 1px solid #333;
-                background:#0c0f16;
-                color:#fff;
-               " />
-        <div id="password-error"
-             style="margin-top: 8px; font-size: 12px; color:#ff6b6b; min-height: 16px;"></div>
-        <button type="submit"
-                style="
-                  margin-top: 14px;
-                  width: 100%;
-                  padding: 10px 12px;
-                  border-radius: 8px;
-                  border: none;
-                  background: #e50914;
-                  color: #fff;
-                  font-weight: 600;
-                  cursor: pointer;
-                ">
-          Enter
-        </button>
-      </form>
-    </div>
-  </div>
-  <!-- end Password Overlay -->
   
   <!-- your existing page content starts below here -->
 
