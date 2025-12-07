@@ -1477,45 +1477,45 @@ if(document.readyState==='complete'||document.readyState==='interactive')boot();
 })();
 </script>
 
-  <script>
-  (function () {
-    // change this to whatever password you want
-    const CORRECT_PASSWORD = "porsche123"; 
+<script>
+(function () {
+  const CORRECT_PASSWORD = "porsche123";
+  const STORAGE_KEY = "residualAppAuthed_v1";
 
-    const overlay = document.getElementById("password-overlay");
-    const form = document.getElementById("password-form");
-    const input = document.getElementById("password-input");
-    const error = document.getElementById("password-error");
-    const STORAGE_KEY = "residualAppAuthed_v1";
+  const overlay = document.getElementById("password-overlay");
+  const form = document.getElementById("password-form");
+  const input = document.getElementById("password-input");
+  const error = document.getElementById("password-error");
 
-    function unlock() {
-      overlay.style.display = "none";
-      localStorage.setItem(STORAGE_KEY, "1");
-    }
-
-    // If already authed on this device, skip prompt
+  function unlock() {
+    overlay.style.display = "none";
     try {
-      if (localStorage.getItem(STORAGE_KEY) === "1") {
-        unlock();
-        return;
-      }
-    } catch (e) {
-      // ignore localStorage errors, just show overlay
+      localStorage.setItem(STORAGE_KEY, "1");
+    } catch (e) {}
+  }
+
+  // Already logged in?
+  try {
+    if (localStorage.getItem(STORAGE_KEY) === "1") {
+      unlock();
+      return;
     }
+  } catch (e) {}
 
-    form.addEventListener("submit", function (e) {
-      e.preventDefault();
-      const val = input.value.trim();
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
 
-      if (val === CORRECT_PASSWORD) {
-        unlock();
-      } else {
-        error.textContent = "Incorrect password. Try again.";
-        input.value = "";
-        input.focus();
-      }
-    });
-  })();
+    const entered = (input.value || "").trim().toLowerCase();
+
+    if (entered === CORRECT_PASSWORD) {
+      unlock();
+    } else {
+      error.textContent = "Incorrect password.";
+      input.value = "";
+      input.focus();
+    }
+  });
+})();
 </script>
 
   <!-- force vercel analytics deploy -->
