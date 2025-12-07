@@ -1477,7 +1477,7 @@ if(document.readyState==='complete'||document.readyState==='interactive')boot();
 })();
 </script>
 
-  <!-- Password Overlay -->
+    <!-- Password Overlay -->
   <div id="password-overlay"
        style="
         position: fixed;
@@ -1560,6 +1560,37 @@ if(document.readyState==='complete'||document.readyState==='interactive')boot();
           Enter
         </button>
       </form>
+
+      <!-- SUCCESS CHECKMARK BLOCK -->
+      <div id="password-success"
+           style="
+             display: none;
+             flex-direction: column;
+             align-items: center;
+             margin-top: 12px;
+             opacity: 0;
+             transform: scale(0.9);
+             transition: opacity 0.4s ease, transform 0.4s ease;
+           ">
+        <div style="
+              width: 64px;
+              height: 64px;
+              border-radius: 50%;
+              border: 3px solid #3BA9FF;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              margin-bottom: 8px;
+              box-shadow: 0 8px 22px rgba(59, 169, 255, 0.7);
+              background: rgba(3, 25, 44, 0.9);
+            ">
+          <span style="font-size: 32px; color:#3BA9FF;">✓</span>
+        </div>
+        <div style="font-size: 14px; font-weight: 600;">
+          Access granted
+        </div>
+      </div>
+      <!-- end SUCCESS CHECKMARK BLOCK -->
     </div>
   </div>
   <!-- end Password Overlay -->
@@ -1577,9 +1608,9 @@ if(document.readyState==='complete'||document.readyState==='interactive')boot();
       const error = document.getElementById("password-error");
       const title = document.getElementById("password-title");
       const subtitle = document.getElementById("password-subtitle");
+      const success = document.getElementById("password-success");
 
       function doFadeOut() {
-        // fade overlay out
         overlay.style.pointerEvents = "none";
         overlay.style.transition = "opacity 0.6s ease-out";
         overlay.style.opacity = "0";
@@ -1588,18 +1619,33 @@ if(document.readyState==='complete'||document.readyState==='interactive')boot();
         }, 650);
       }
 
-      function showWelcome() {
+      function playSuccess() {
+        // update texts
         if (title) title.textContent = "Welcome";
-        if (subtitle) subtitle.textContent = "Loading your Residual App...";
+        if (subtitle) subtitle.textContent = "Access granted. Loading your Residual App...";
+
+        // hide form, show success block
+        if (form) form.style.display = "none";
         if (error) error.textContent = "";
+
+        if (success) {
+          success.style.display = "flex";
+          // kick off CSS transition
+          requestAnimationFrame(function () {
+            success.style.opacity = "1";
+            success.style.transform = "scale(1)";
+          });
+        }
+
+        // after short delay, fade overlay out
+        setTimeout(doFadeOut, 900);
       }
 
       function unlock() {
         try {
           localStorage.setItem(STORAGE_KEY, "1");
         } catch (e) {}
-        showWelcome();
-        doFadeOut();
+        playSuccess();
       }
 
       // Already logged in on this device?
