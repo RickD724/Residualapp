@@ -1482,20 +1482,43 @@ if(document.readyState==='complete'||document.readyState==='interactive')boot();
        style="
         position: fixed;
         inset: 0;
-        background: #050608;
+        background: linear-gradient(135deg, #041320, #062b44);
         color: #fff;
         display: flex;
         align-items: center;
         justify-content: center;
         z-index: 9999;
        ">
-    <div style="text-align: center; max-width: 320px; padding: 24px; border-radius: 12px; background: #141821; box-shadow: 0 10px 30px rgba(0,0,0,0.7);">
-      <h2 style="margin: 0 0 12px; font-family: system-ui, -apple-system, BlinkMacSystemFont;">
+    <div id="password-card"
+         style="
+          text-align: center;
+          max-width: 320px;
+          width: 90%;
+          padding: 24px 22px;
+          border-radius: 16px;
+          background: rgba(7, 15, 26, 0.96);
+          box-shadow: 0 18px 40px rgba(0, 0, 0, 0.8);
+          border: 1px solid rgba(90, 170, 255, 0.7);
+         ">
+      <h2 id="password-title"
+          style="
+            margin: 0 0 8px;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-size: 20px;
+            letter-spacing: 0.03em;
+          ">
         Residual App – Login
       </h2>
-      <p style="margin: 0 0 16px; font-size: 14px; opacity: 0.8;">
+
+      <p id="password-subtitle"
+         style="
+           margin: 0 0 18px;
+           font-size: 13px;
+           opacity: 0.85;
+         ">
         Enter the access password to continue.
       </p>
+
       <form id="password-form">
         <input id="password-input"
                type="password"
@@ -1505,72 +1528,109 @@ if(document.readyState==='complete'||document.readyState==='interactive')boot();
                 width: 100%;
                 padding: 10px 12px;
                 border-radius: 8px;
-                border: 1px solid #333;
-                background:#0c0f16;
+                border: 1px solid #35597b;
+                background:#0b1523;
                 color:#fff;
+                font-size: 14px;
                " />
         <div id="password-error"
-             style="margin-top: 8px; font-size: 12px; color:#ff6b6b; min-height: 16px;"></div>
+             style="
+               margin-top: 8px;
+               font-size: 12px;
+               min-height: 16px;
+               color:#ff6b6b;
+             "></div>
         <button type="submit"
                 style="
                   margin-top: 14px;
                   width: 100%;
                   padding: 10px 12px;
-                  border-radius: 8px;
+                  border-radius: 10px;
                   border: none;
-                  background: #e50914;
+                  background: #3BA9FF;
                   color: #fff;
                   font-weight: 600;
+                  font-size: 14px;
                   cursor: pointer;
-                ">
+                  box-shadow: 0 6px 16px rgba(59, 169, 255, 0.55);
+                  transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+                "
+                onmouseover="this.style.background='#66C3FF'; this.style.transform='translateY(-1px)'; this.style.boxShadow='0 8px 20px rgba(102,195,255,0.7)';"
+                onmouseout="this.style.background='#3BA9FF'; this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 16px rgba(59,169,255,0.55)';">
           Enter
         </button>
       </form>
     </div>
   </div>
   <!-- end Password Overlay -->
-  
 
-<script>
-(function () {
-  const CORRECT_PASSWORD = "porsche123";
-  const STORAGE_KEY = "residualAppAuthed_v1";
+  <!-- Password Script -->
+  <script>
+    (function () {
+      const CORRECT_PASSWORD = "porsche123";
+      const STORAGE_KEY = "residualAppAuthed_v1";
 
-  const overlay = document.getElementById("password-overlay");
-  const form = document.getElementById("password-form");
-  const input = document.getElementById("password-input");
-  const error = document.getElementById("password-error");
+      const overlay = document.getElementById("password-overlay");
+      const card = document.getElementById("password-card");
+      const form = document.getElementById("password-form");
+      const input = document.getElementById("password-input");
+      const error = document.getElementById("password-error");
+      const title = document.getElementById("password-title");
+      const subtitle = document.getElementById("password-subtitle");
 
-  function unlock() {
-    overlay.style.display = "none";
-    try {
-      localStorage.setItem(STORAGE_KEY, "1");
-    } catch (e) {}
-  }
+      function doFadeOut() {
+        // fade overlay out
+        overlay.style.pointerEvents = "none";
+        overlay.style.transition = "opacity 0.6s ease-out";
+        overlay.style.opacity = "0";
+        setTimeout(function () {
+          overlay.style.display = "none";
+        }, 650);
+      }
 
-  // Already logged in?
-  try {
-    if (localStorage.getItem(STORAGE_KEY) === "1") {
-      unlock();
-      return;
-    }
-  } catch (e) {}
+      function showWelcome() {
+        if (title) title.textContent = "Welcome";
+        if (subtitle) subtitle.textContent = "Loading your Residual App...";
+        if (error) error.textContent = "";
+      }
 
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
+      function unlock() {
+        try {
+          localStorage.setItem(STORAGE_KEY, "1");
+        } catch (e) {}
+        showWelcome();
+        doFadeOut();
+      }
 
-    const entered = (input.value || "").trim().toLowerCase();
+      // Already logged in on this device?
+      try {
+        if (localStorage.getItem(STORAGE_KEY) === "1") {
+          unlock();
+          return;
+        }
+      } catch (e) {}
 
-    if (entered === CORRECT_PASSWORD) {
-      unlock();
-    } else {
-      error.textContent = "Incorrect password.";
-      input.value = "";
-      input.focus();
-    }
-  });
-})();
-</script>
+      if (!form || !input) return;
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        const entered = (input.value || "").trim().toLowerCase();
+
+        if (!entered) {
+          error.textContent = "Please enter the password.";
+          return;
+        }
+
+        if (entered === CORRECT_PASSWORD) {
+          unlock();
+        } else {
+          error.textContent = "Incorrect password. Try again.";
+          input.value = "";
+          input.focus();
+        }
+      });
+    })();
+  </script>
 
   <!-- force vercel analytics deploy -->
 
