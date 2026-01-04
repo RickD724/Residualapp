@@ -69,6 +69,7 @@
   @keyframes scaleIn { from{transform:scale(.9);opacity:0} to{transform:scale(1);opacity:1} }
   @keyframes shimmer { 0%{background-position:-1000px 0} 100%{background-position:1000px 0} }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
   
   html, body{
     background: var(--bg);
@@ -197,6 +198,19 @@
     position:relative; z-index:1;
   }
   .result .small{ font-size:1rem; font-weight:600; position:relative; z-index:1; }
+  
+  /* MRM Alert Banner */
+  .mrm-alert{
+    display:none; padding:14px 18px; margin:10px 0; border-radius:10px;
+    background:linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(245, 158, 11, 0.15));
+    border:2px solid var(--danger); animation:scaleIn .5s ease, shake .5s ease;
+  }
+  .mrm-alert.show{ display:flex; align-items:center; gap:12px; }
+  .mrm-alert-icon{ font-size:1.8rem; }
+  .mrm-alert-content{ flex:1; }
+  .mrm-alert-title{ font-weight:800; font-size:1.05rem; color:var(--danger); margin-bottom:4px; }
+  .mrm-alert-text{ font-size:.9rem; color:var(--text); }
+  .mrm-badge{ background:var(--danger); color:#fff; padding:4px 10px; border-radius:999px; font-size:.85rem; font-weight:700; }
   
   .tableWrap{ margin-top:14px; overflow-x:auto; -webkit-overflow-scrolling:touch; border:1px solid var(--border); border-radius:12px; background:var(--bg-secondary); }
   table{ min-width:720px; width:100%; border-collapse:separate; border-spacing:0; }
@@ -353,6 +367,7 @@
         <div>
           <label>💰 MSRP ($)</label>
           <input id="msrpInput" type="number" min="0" step="100" placeholder="e.g., 142,000" />
+          <div class="hint" id="mrmHint">—</div>
         </div>
         <div>
           <label>🔗 Shareable Link</label>
@@ -360,6 +375,16 @@
           <div class="hint">Auto-updates — copy to share calc</div>
         </div>
       </div>
+    </div>
+
+    <!-- MRM Alert Banner -->
+    <div class="mrm-alert" id="mrmAlert">
+      <div class="mrm-alert-icon">⚠️</div>
+      <div class="mrm-alert-content">
+        <div class="mrm-alert-title">MSRP Exceeds Maximum Retail Multiple</div>
+        <div class="mrm-alert-text" id="mrmAlertText">—</div>
+      </div>
+      <div class="mrm-badge" id="mrmAlertBadge">—</div>
     </div>
 
     <div class="card" style="margin-top: 14px; animation-delay: 0.2s;">
@@ -405,6 +430,10 @@
           <div class="srow">
             <span class="slabel">Value Index</span>
             <span class="sval" id="sumLvi" title="Higher is better">—</span>
+          </div>
+          <div class="srow" id="mrmRow" style="display:none;">
+            <span class="slabel">Max Retail (MRM)</span>
+            <span class="sval" id="sumMrm">—</span>
           </div>
         </div>
         <div class="hint" id="lviHelp" style="margin-top:8px;text-align:center;">💡 Higher Value Index = Better Deal</div>
@@ -621,6 +650,12 @@
   var mfAprHint = document.getElementById('mfAprHint');
   var lviBadge = document.getElementById('lviBadge');
   var sumLvi = document.getElementById('sumLvi');
+  var mrmHint = document.getElementById('mrmHint');
+  var mrmAlert = document.getElementById('mrmAlert');
+  var mrmAlertText = document.getElementById('mrmAlertText');
+  var mrmAlertBadge = document.getElementById('mrmAlertBadge');
+  var sumMrm = document.getElementById('sumMrm');
+  var mrmRow = document.getElementById('mrmRow');
   var validatorCard = document.getElementById('validatorCard');
   var closeValBtn = document.getElementById('closeValBtn');
   var validatorOutput = document.getElementById('validatorOutput');
@@ -776,14 +811,14 @@
     var dispYear = yearSel.value;
     var yearKey = Object.keys(branch).find(function(k){ return normalizeYearKey(k).display === dispYear; });
     var rows = (yearKey && branch[yearKey]) || {};
-    Object.entries(rows).forEach(function(entry){ fullTrimList.push({code: entry[0], model: entry[1].model || entry[0]}); });
+    Object.entries(rows).forEach(function(entry){ fullTrimList.push({code: entry[0], model: entry[1].model || entry[0], mrm: entry[1].mrm || null}); });
   }
   
   function populateTrims(filterTerm){
     trimSel.innerHTML = '';
     var term = (filterTerm||'').trim().toLowerCase();
     var filtered = fullTrimList.filter(function(t){ return (t.model + " " + t.code).toLowerCase().indexOf(term) !== -1; });
-    filtered.forEach(function(item){ var opt = document.createElement('option'); opt.value = item.code; opt.textContent = item.model; opt.dataset.code = item.code; trimSel.appendChild(opt); });
+    filtered.forEach(function(item){ var opt = document.createElement('option'); opt.value = item.code; opt.textContent = item.model; opt.dataset.code = item.code; opt.dataset.mrm = item.mrm || ''; trimSel.appendChild(opt); });
     trimCount.textContent = filtered.length ? (filtered.length + ' trim(s) available') : 'No matches';
     trimWarn.style.display = filtered.length ? 'none' : 'block';
   }
@@ -822,6 +857,28 @@
 
   function computeLVI(rvPercent, mf){ if(!isFinite(rvPercent) || !isFinite(mf) || mf <= 0) return null; return rvPercent / mf; }
 
+  function checkMRM(msrp, mrm){
+    if(!msrp || !mrm || msrp <= mrm){
+      if(mrmAlert) mrmAlert.classList.remove('show');
+      if(mrmRow) mrmRow.style.display = 'none';
+      if(mrmHint) mrmHint.textContent = mrm ? ('Max: $' + mrm.toLocaleString()) : '—';
+      return false;
+    }
+    
+    var excess = Math.round(msrp - mrm);
+    if(mrmAlert){
+      mrmAlert.classList.add('show');
+      if(mrmAlertText) mrmAlertText.textContent = 'MSRP $' + msrp.toLocaleString() + ' exceeds max $' + mrm.toLocaleString() + ' by $' + excess.toLocaleString();
+      if(mrmAlertBadge) mrmAlertBadge.textContent = '+$' + excess.toLocaleString();
+    }
+    if(mrmRow){
+      mrmRow.style.display = 'flex';
+      if(sumMrm) sumMrm.textContent = '$' + mrm.toLocaleString();
+    }
+    if(mrmHint) mrmHint.textContent = '⚠️ Max: $' + mrm.toLocaleString();
+    return true;
+  }
+
   function compute(){
     var fam = familySel.value;
     var branch = branchForFamily(fam);
@@ -838,12 +895,20 @@
       trueOut.textContent = '';
       if(lviBadge) lviBadge.textContent = '';
       if(sumLvi) sumLvi.textContent = '—';
+      if(mrmAlert) mrmAlert.classList.remove('show');
+      if(mrmRow) mrmRow.style.display = 'none';
+      if(mrmHint) mrmHint.textContent = '—';
       updateShareURL();
       sniffRun(); // still update sniffer to clear
       return;
     }
 
     var entry = branch[yrKey][code];
+    var mrm = entry && entry.mrm ? entry.mrm : null;
+    var msrp = msrpInput.value ? Number(msrpInput.value) : null;
+    
+    checkMRM(msrp, mrm);
+
     var base = term ? ((entry && entry.residuals && entry.residuals[term]) || null) : null;
     var PACPOv = data.pacpo_bonus_percent || 2;
     var pacpoAdj = pacpoToggle.checked ? PACPOv : 0;
@@ -993,10 +1058,11 @@
     if(!data){ alert('Load a program first.'); return; }
     var issues = [];
     var models = data.models || {};
-    var totalTrims = 0, missingCells = 0;
+    var totalTrims = 0, missingCells = 0, missingMRM = 0;
 
     function checkEntry(modelFamily, yearKey, code, entry){
       totalTrims++;
+      if(!entry.mrm) missingMRM++;
       var resids = entry.residuals || {};
       MONTHS.forEach(function(m){
         if(!(m in resids) || resids[m] == null){
@@ -1034,6 +1100,7 @@
     out.push('MONTHS: ' + JSON.stringify(MONTHS));
     out.push('PACPO: ' + (data.pacpo_bonus_percent || 2) + '%');
     out.push('Trims: ' + totalTrims);
+    out.push('Missing MRM values: ' + missingMRM);
     out.push('Missing cells: ' + missingCells);
     out.push('—');
     if(issues.length===0) out.push('✅ No issues found!');
