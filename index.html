@@ -70,6 +70,20 @@
   @keyframes shimmer { 0%{background-position:-1000px 0} 100%{background-position:1000px 0} }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.6} }
   @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+  @keyframes successPulse { 
+    0%{box-shadow:0 0 0 0 rgba(16,185,129,0.7)} 
+    70%{box-shadow:0 0 0 10px rgba(16,185,129,0)} 
+    100%{box-shadow:0 0 0 0 rgba(16,185,129,0)} 
+  }
+  @keyframes glow { 
+    0%,100%{filter:brightness(1)} 
+    50%{filter:brightness(1.2)} 
+  }
+  @keyframes buttonPress { 
+    0%{transform:scale(1)} 
+    50%{transform:scale(0.95)} 
+    100%{transform:scale(1)} 
+  }
   
   html, body{
     background: var(--bg);
@@ -144,18 +158,34 @@
   
   .theme,.btn{
     border:1px solid var(--border); background:var(--card); backdrop-filter:blur(10px);
-    color:var(--text); padding:8px 14px; border-radius:10px; /* tighter */
+    color:var(--text); padding:8px 14px; border-radius:10px;
     cursor:pointer; font-weight:600; font-size:.88rem; transition:var(--transition); white-space:nowrap; font-family:'Inter',sans-serif; position:relative; overflow:hidden;
+  }
+  .theme:hover,.btn:hover{
+    border-color:var(--border-hover); 
+    box-shadow:0 4px 12px rgba(59,130,246,0.15);
+    transform:translateY(-1px);
+  }
+  .theme:active,.btn:active{
+    transform:translateY(0) scale(0.98);
+    box-shadow:0 2px 4px rgba(59,130,246,0.1);
+  }
+  .btn.success{
+    animation:successPulse 0.6s ease;
   }
   
   .select{ min-width:200px; transition:var(--transition); }
   
   .card{
     background:var(--card); backdrop-filter:blur(30px) saturate(180%); -webkit-backdrop-filter:blur(30px) saturate(180%);
-    border:1px solid var(--border); border-radius:14px; /* tighter */
+    border:1px solid var(--border); border-radius:14px;
     box-shadow:var(--shadow);
-    padding:22px; /* tighter */
+    padding:22px;
     transition:var(--transition); animation:fadeInUp .6s ease; position:relative; overflow:hidden;
+  }
+  .card:hover{
+    border-color:var(--border-hover);
+    box-shadow:var(--shadow-lg);
   }
   
   .controls{ position:sticky; top:100px; z-index:20; animation-delay:.2s; }
@@ -172,15 +202,29 @@
   
   select,input[type="number"],input[type="text"]{
     width:100%; appearance:none; -webkit-appearance:none; background:var(--bg-secondary);
-    color:var(--text); border:2px solid var(--border); border-radius:10px; /* tighter */
+    color:var(--text); border:2px solid var(--border); border-radius:10px;
     padding:12px 14px; font-size:.94rem; font-weight:500; transition:var(--transition); font-family:'Inter',sans-serif;
+  }
+  select:hover,input[type="number"]:hover,input[type="text"]:hover{
+    border-color:var(--border-hover);
+    box-shadow:0 0 0 3px rgba(59,130,246,0.05);
+  }
+  select:focus,input[type="number"]:focus,input[type="text"]:focus{
+    outline:none;
+    border-color:var(--accent);
+    box-shadow:0 0 0 3px var(--accent-glow);
   }
   select{
     cursor:pointer;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
     background-repeat:no-repeat; background-position:right 12px center; padding-right:40px;
   }
-  input[type="checkbox"]{ width:22px; height:22px; cursor:pointer; accent-color:var(--accent); transition:var(--transition); }
+  input[type="checkbox"]{ 
+    width:22px; height:22px; cursor:pointer; accent-color:var(--accent); transition:var(--transition);
+  }
+  input[type="checkbox"]:hover{
+    transform:scale(1.1);
+  }
   
   .muted{ color:var(--muted); }
   .hint{ font-size:.8rem; color:var(--muted); margin-top:6px; font-weight:500; font-style:italic; }
@@ -260,7 +304,14 @@
     border:1px solid var(--border); border-radius:12px; background:var(--bg-secondary); padding:14px;
     display:flex; flex-direction:column; gap:10px; cursor:pointer; transition:var(--transition);
   }
-  .sniff-card:hover{ transform:translateY(-2px); box-shadow:var(--shadow-lg); border-color:var(--border-hover); }
+  .sniff-card:hover{ 
+    transform:translateY(-3px) scale(1.01); 
+    box-shadow:var(--shadow-lg), 0 0 20px var(--accent-glow); 
+    border-color:var(--accent);
+  }
+  .sniff-card:active{
+    transform:translateY(-1px) scale(0.99);
+  }
   .sniff-head{ display:flex; align-items:baseline; justify-content:space-between; gap:8px; }
   .sniff-title{ font-weight:900; font-size:1rem; }
   .sniff-sub{ color:var(--muted); font-size:.85rem; }
@@ -274,7 +325,8 @@
 <style id="top15-css">
 .rank-list{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(1,minmax(0,1fr));gap:10px}
 .rank-item{border:1px solid var(--border);border-radius:12px;background:var(--bg-secondary);padding:12px;display:flex;gap:10px;align-items:center;transition:var(--transition)}
-.rank-item:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);border-color:var(--border-hover)}
+.rank-item:hover{transform:translateY(-2px) scale(1.01);box-shadow:var(--shadow-lg), 0 0 15px var(--accent-glow);border-color:var(--accent)}
+.rank-item:active{transform:translateY(0) scale(0.99)}
 .rank-no{width:36px;height:36px;border-radius:999px;display:flex;align-items:center;justify-content:center;font-weight:900;border:1px solid var(--border)}
 .rank-main{flex:1;display:flex;flex-direction:column;gap:4px}
 .rank-title{font-weight:900;font-size:.98rem}
@@ -857,6 +909,35 @@
 
   function computeLVI(rvPercent, mf){ if(!isFinite(rvPercent) || !isFinite(mf) || mf <= 0) return null; return rvPercent / mf; }
 
+  function animateNumber(element, start, end, duration, suffix){
+    if(!element) return;
+    var startTime = null;
+    var startVal = parseFloat(start) || 0;
+    var endVal = parseFloat(end);
+    
+    function animate(currentTime){
+      if(!startTime) startTime = currentTime;
+      var progress = Math.min((currentTime - startTime) / duration, 1);
+      var current = startVal + (endVal - startVal) * progress;
+      
+      if(suffix === '%'){
+        element.textContent = Math.round(current) + '%';
+      } else if(suffix === '$'){
+        element.textContent = '$' + Math.round(current).toLocaleString();
+      } else if(suffix === 'k'){
+        element.textContent = (current/1000).toFixed(1) + 'k';
+      } else {
+        element.textContent = Math.round(current).toLocaleString();
+      }
+      
+      if(progress < 1){
+        requestAnimationFrame(animate);
+      }
+    }
+    
+    requestAnimationFrame(animate);
+  }
+
   function checkMRM(msrp, mrm){
     if(!msrp || !mrm || msrp <= mrm){
       if(mrmAlert) mrmAlert.classList.remove('show');
@@ -927,7 +1008,12 @@
     buildHeader(monthsShown);
 
     var final = (base === null || term == null) ? null : (base + pacpoAdj + annualAdj + inceptionAdj);
-    finalOut.textContent = final === null ? '—' : final + '%';
+    if(final === null){
+      finalOut.textContent = '—';
+    } else {
+      var oldVal = parseFloat(finalOut.textContent) || 0;
+      animateNumber(finalOut, oldVal, final, 400, '%');
+    }
     detailOut.textContent = final === null ? 'Select a term' : 'Final with all adjustments';
     codeBadge.textContent = 'Code: ' + (code || '—');
 
@@ -1050,6 +1136,15 @@
     a.download = 'residual_' + safeTrim + '_' + (dispYear||'MY').replace(/\s+/g,'') + '.csv';
     document.body.appendChild(a); a.click(); a.remove();
     URL.revokeObjectURL(url);
+    
+    // Success feedback
+    exportCsvBtn.classList.add('success');
+    var oldText = exportCsvBtn.innerHTML;
+    exportCsvBtn.innerHTML = '✅ Exported!';
+    setTimeout(function(){
+      exportCsvBtn.innerHTML = oldText;
+      exportCsvBtn.classList.remove('success');
+    }, 1500);
   }
   
   function printSummary(){ window.print(); }
@@ -1358,8 +1453,13 @@ div.addEventListener('click', function(){
     ].filter(Boolean);
     var text = parts.join(' | ');
     navigator.clipboard.writeText(text).then(function(){
-      var old = copyBtn.innerHTML; copyBtn.innerHTML = '✅ Copied!';
-      setTimeout(function(){ copyBtn.innerHTML = old; }, 1200);
+      var old = copyBtn.innerHTML; 
+      copyBtn.innerHTML = '✅ Copied!';
+      copyBtn.classList.add('success');
+      setTimeout(function(){ 
+        copyBtn.innerHTML = old; 
+        copyBtn.classList.remove('success');
+      }, 1200);
     });
   });
 
