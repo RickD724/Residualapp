@@ -1384,7 +1384,7 @@ div.addEventListener('click', function(){
     loadProgram(programSel.value, currentProgramLabel).catch(function(err){ alert(err.message); });
   } else {
     programSel.value = 'porsche_residuals_all.json';
-    loadProgram(programSel.value, 'PB 25-10R (Default)').catch(function(){
+    loadProgram(programSel.value, 'JANUARY 2026 (Default)').catch(function(){
       programSel.value = '__current__';
       loadProgram('__current__', 'Current').catch(function(err){ alert(err.message); });
     });
